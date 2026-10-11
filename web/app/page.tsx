@@ -1,138 +1,152 @@
-import TopBar from '../components/TopBar';
-import { Plane, Car, QrCode, Building, MapPin, Ship } from 'lucide-react';
+'use client';
 
-export const instant = false;
+import { useState, useEffect } from 'react';
+import { Wand2, FileImage, SlidersHorizontal, MapPin, Search, ChevronDown, User } from 'lucide-react';
+import Link from 'next/link';
 
-export default async function TravelBoard() {
+export default function HomeDashboard() {
+  const [activeTab, setActiveTab] = useState<'prompt' | 'upload' | 'classic'>('prompt');
+  const [placeholderText, setPlaceholderText] = useState('');
+  
+  // Animation du placeholder pour suggérer des prompts à l'utilisateur (CDC 2.1.1.1)
+  useEffect(() => {
+    const suggestions = [
+      "Voyage aux Philippines, 21 jours, 5 îles...",
+      "Un week-end à Europa-Park...",
+      "Train pour Rome demain matin...",
+      "Deux semaines au soleil en décembre..."
+    ];
+    let currentIndex = 0;
+    
+    const interval = setInterval(() => {
+      setPlaceholderText(suggestions[currentIndex]);
+      currentIndex = (currentIndex + 1) % suggestions.length;
+    }, 3000);
+    
+    return () => clearInterval(interval);
+  }, []);
+
   return (
-    <>
-      <TopBar />
+    <div className="w-full h-full flex flex-col items-center justify-center relative pointer-events-auto">
+      
+      {/* HEADER INVISIBLE (Logo + Profil) */}
+      <header className="absolute top-0 left-0 w-full p-8 flex justify-between items-center z-50">
+        <div className="w-12 h-12"></div> {/* Espace pour équilibrer */}
+        <div className="font-bold text-4xl text-abysse flex items-center gap-1 italic drop-shadow-md">
+          Ride<span className="text-bronze">Up</span>
+        </div>
+        <button className="w-12 h-12 rounded-full glass-container flex items-center justify-center text-abysse font-bold relative hover:bg-white/80 transition-all shadow-md">
+          Y <span className="absolute -top-2 -right-2 text-xl drop-shadow-sm">👑</span>
+        </button>
+      </header>
 
-      <div className="flex flex-1 overflow-hidden relative pointer-events-none">
+      {/* SIMULATION DES GLOWING NODES SUR LA CARTE EN ARRIÈRE-PLAN (CDC Tech.7) */}
+      <div className="absolute top-[30%] left-[20%] w-4 h-4 rounded-full bg-bronze shadow-[0_0_20px_rgba(198,123,47,0.8)] animate-pulse"></div>
+      <div className="absolute top-[60%] right-[25%] w-3 h-3 rounded-full bg-bronze shadow-[0_0_20px_rgba(198,123,47,0.8)] animate-pulse" style={{ animationDelay: '1s' }}></div>
+      <div className="absolute bottom-[20%] left-[40%] w-5 h-5 rounded-full bg-bronze shadow-[0_0_20px_rgba(198,123,47,0.8)] animate-pulse" style={{ animationDelay: '0.5s' }}></div>
+
+      {/* LE MODULE DE RECHERCHE CENTRAL (Glassmorphism) */}
+      <main className="glass-container w-full max-w-3xl p-2 flex flex-col z-10 shadow-2xl">
         
-        {/* LA TIMELINE - Avec ID pour le ciblage du scroll */}
-        <main id="timeline-container" className="w-[33vw] min-w-[420px] max-w-[500px] h-full overflow-y-auto pb-64 no-scrollbar pointer-events-auto px-6 scroll-smooth">
-          
-          <div className="relative pl-16 pt-8"> 
-            
-            {/* LIGNE VERTICALE GLOBALE */}
-            <div className="absolute left-[4.5rem] top-0 bottom-0 w-[2px] bg-abysse/10 rounded-full"></div>
+        {/* Les 3 Portes d'entrée (Tabs) */}
+        <div className="flex p-2 gap-2 mb-2">
+          <button 
+            onClick={() => setActiveTab('prompt')}
+            className={`flex-1 flex items-center justify-center gap-2 py-3 rounded-2xl text-sm font-bold transition-all ${activeTab === 'prompt' ? 'bg-white text-abysse shadow-sm' : 'text-abysse/50 hover:bg-white/40'}`}
+          >
+            <Wand2 size={18} className={activeTab === 'prompt' ? 'text-bronze' : ''} />
+            Prompt IA
+          </button>
+          <button 
+            onClick={() => setActiveTab('upload')}
+            className={`flex-1 flex items-center justify-center gap-2 py-3 rounded-2xl text-sm font-bold transition-all ${activeTab === 'upload' ? 'bg-white text-abysse shadow-sm' : 'text-abysse/50 hover:bg-white/40'}`}
+          >
+            <FileImage size={18} className={activeTab === 'upload' ? 'text-bronze' : ''} />
+            Importer document
+          </button>
+          <button 
+            onClick={() => setActiveTab('classic')}
+            className={`flex-1 flex items-center justify-center gap-2 py-3 rounded-2xl text-sm font-bold transition-all ${activeTab === 'classic' ? 'bg-white text-abysse shadow-sm' : 'text-abysse/50 hover:bg-white/40'}`}
+          >
+            <SlidersHorizontal size={18} className={activeTab === 'classic' ? 'text-bronze' : ''} />
+            Recherche classique
+          </button>
+        </div>
 
-            {/* ========================================================= */}
-            {/* 1. TRAJET INTERNATIONAL (Paris -> Manille/Boracay)        */}
-            {/* ========================================================= */}
-            <div className="relative mb-10">
-              <div className="absolute -left-16 top-4 bg-white/80 backdrop-blur-md rounded-2xl w-14 h-16 flex flex-col items-center justify-center z-20 shadow-sm border border-white">
-                <span className="text-[9px] font-bold text-abysse/50 uppercase">Jeudi</span>
-                <span className="text-xl font-black text-abysse leading-none">20</span>
-                <span className="text-[9px] font-bold text-abysse/50 uppercase">Fév.</span>
-              </div>
-              
-              <div className="bg-white/70 backdrop-blur-xl border border-white shadow-xl rounded-3xl ml-6 relative z-10 overflow-hidden">
-                <div className="bg-white/50 p-4 border-b border-white flex justify-between items-center">
-                  <div className="flex items-center gap-3">
-                    <Plane size={20} className="text-bronze" />
-                    <h3 className="font-bold text-abysse text-lg">Voyage Paris ➔ Boracay</h3>
-                  </div>
-                </div>
-
-                {/* Vol 1 */}
-                <div className="p-5 border-b border-white/60 relative">
-                  <p className="text-xs font-bold text-abysse/60 mb-4 flex items-center gap-2">
-                    <span className="w-5 h-5 rounded-full bg-abysse/10 text-abysse flex items-center justify-center text-[10px]">1</span>
-                    CDG (T1) ➔ Taipei (T1)
-                  </p>
-                  <div className="flex justify-between items-center bg-white/50 p-4 rounded-2xl border border-white shadow-sm">
-                    <div>
-                      <div className="text-2xl font-black text-abysse flex items-center gap-3">
-                        CDG <Plane size={16} className="text-bronze/50" /> TPE
-                      </div>
-                      <p className="text-sm text-abysse/70 font-semibold mt-1">18:50 ➔ 07:30 <span className="text-[10px] text-bronze">(+1)</span></p>
-                    </div>
-                  </div>
-                </div>
-              </div>
+        {/* CONTENU : PROMPT IA */}
+        {activeTab === 'prompt' && (
+          <div className="bg-white/60 rounded-2xl p-4 flex items-center gap-4 border border-white/80">
+            <div className="w-12 h-12 rounded-full bg-bronze/10 flex items-center justify-center shrink-0">
+              <Wand2 size={24} className="text-bronze" />
             </div>
-
-            {/* ========================================================= */}
-            {/* 2. ÉTAPE 1 : BORACAY                                      */}
-            {/* ========================================================= */}
-            <div className="relative mb-10">
-              <div className="absolute -left-16 top-4 bg-white/80 backdrop-blur-md rounded-2xl w-14 h-16 flex flex-col items-center justify-center z-20 shadow-sm border border-white">
-                <span className="text-[9px] font-bold text-abysse/50 uppercase">Ven.</span>
-                <span className="text-xl font-black text-abysse leading-none">21</span>
-                <span className="text-[9px] font-bold text-abysse/50 uppercase">Fév.</span>
-              </div>
-              
-              <div className="bg-white/70 backdrop-blur-xl border border-white shadow-xl rounded-3xl ml-6 relative z-10 overflow-hidden">
-                <div className="absolute -left-3 top-6 w-6 h-6 rounded-full bg-bronze border-2 border-white flex items-center justify-center text-[10px] font-bold text-white z-20 shadow-md">1</div>
-                
-                <div className="p-6">
-                  <h3 className="font-bold text-abysse text-2xl mb-1">Boracay</h3>
-                  <p className="text-xs font-medium text-abysse/50 mb-4">4 nuits • Station 2</p>
-
-                  {/* Hébergement */}
-                  <div className="bg-white/50 p-4 rounded-2xl border border-white shadow-sm mb-3">
-                    <p className="text-[10px] font-bold text-bronze uppercase tracking-wider mb-2 flex items-center gap-1"><Building size={12}/> Hébergement Confirmé</p>
-                    <p className="font-bold text-abysse text-sm">Hennan Palm Beach Resort</p>
-                    <p className="text-xs text-abysse/60 mt-1">Chambre Double Deluxe vue mer</p>
-                  </div>
-
-                  {/* Activité */}
-                  <div className="bg-white/50 p-4 rounded-2xl border border-white shadow-sm">
-                    <p className="text-[10px] font-bold text-abysse/40 uppercase tracking-wider mb-2 flex items-center gap-1"><MapPin size={12}/> À ne pas rater</p>
-                    <p className="font-bold text-abysse text-sm">Coucher de soleil sur White Beach</p>
-                  </div>
-                </div>
-
-                {/* Image de Boracay (Optionnelle, mais donne du cachet) */}
-                <div className="h-24 w-full bg-[url('https://images.unsplash.com/photo-1518509562904-e7ef99cdcc86?q=80&w=1000')] bg-cover bg-center opacity-80"></div>
-              </div>
-            </div>
-
-            {/* ========================================================= */}
-            {/* 3. TRAJET INTERNE (Boracay -> Bohol/Panglao)              */}
-            {/* ========================================================= */}
-            <div className="relative mb-10">
-              <div className="absolute -left-16 top-4 bg-white/80 backdrop-blur-md rounded-2xl w-14 h-16 flex flex-col items-center justify-center z-20 shadow-sm border border-white">
-                <span className="text-[9px] font-bold text-abysse/50 uppercase">Mar.</span>
-                <span className="text-xl font-black text-abysse leading-none">25</span>
-                <span className="text-[9px] font-bold text-abysse/50 uppercase">Fév.</span>
-              </div>
-              
-              <div className="bg-white/70 backdrop-blur-xl border border-white shadow-md rounded-3xl ml-6 p-4 relative z-10">
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-full bg-white flex items-center justify-center text-bronze shadow-sm">
-                    <Ship size={20} />
-                  </div>
-                  <div>
-                    <h3 className="font-bold text-abysse text-sm">Ferry : Caticlan ➔ Tagbilaran</h3>
-                    <p className="text-xs text-abysse/50">OceanJet • Durée : 5h30</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* ========================================================= */}
-            {/* 4. ÉTAPE 2 : BOHOL (Panglao)                              */}
-            {/* ========================================================= */}
-            <div className="relative mb-10">
-              <div className="absolute -left-16 top-4 bg-white/80 backdrop-blur-md rounded-2xl w-14 h-16 flex flex-col items-center justify-center z-20 shadow-sm border border-white opacity-60">
-                <span className="text-[9px] font-bold text-abysse/50 uppercase">Mar.</span>
-                <span className="text-xl font-black text-abysse leading-none">25</span>
-                <span className="text-[9px] font-bold text-abysse/50 uppercase">Fév.</span>
-              </div>
-              
-              <div className="bg-white/40 backdrop-blur-xl border border-white shadow-sm rounded-3xl ml-6 relative z-10 p-6 opacity-70 hover:opacity-100 transition-opacity cursor-pointer">
-                 <div className="absolute -left-3 top-6 w-6 h-6 rounded-full bg-white border border-abysse/20 flex items-center justify-center text-[10px] font-bold text-abysse/50 z-20">2</div>
-                 <h3 className="font-bold text-abysse text-2xl mb-1">Bohol (Panglao)</h3>
-                 <p className="text-xs font-medium text-abysse/50">3 nuits • Alona Beach</p>
-              </div>
-            </div>
-
+            <input 
+              type="text" 
+              className="flex-1 bg-transparent border-none outline-none text-xl text-abysse placeholder:text-abysse/30 font-medium"
+              placeholder={placeholderText || "Décrivez votre voyage idéal..."}
+            />
+            {/* Redirection vers le tunnel QDIS (CDC 2.1) */}
+            <Link href="/qdis" className="bg-abysse text-white px-8 py-4 rounded-xl font-bold hover:bg-bronze transition-colors shadow-md flex items-center gap-2">
+              <Search size={18} /> Lancer
+            </Link>
           </div>
-        </main>
+        )}
+
+        {/* CONTENU : IMPORTER DOCUMENT (Dropzone) */}
+        {activeTab === 'upload' && (
+          <div className="bg-white/60 rounded-2xl p-10 flex flex-col items-center justify-center border-2 border-dashed border-bronze/30 gap-4 cursor-pointer hover:bg-white/80 transition-colors">
+            <div className="w-16 h-16 rounded-full bg-bronze/10 flex items-center justify-center">
+              <FileImage size={32} className="text-bronze" />
+            </div>
+            <div className="text-center">
+              <p className="font-bold text-abysse text-lg">Glissez un PDF ou une capture d'écran</p>
+              <p className="text-sm text-abysse/50 mt-1">L'IA extraira automatiquement votre réservation pour créer le Travel Board.</p>
+            </div>
+            <Link href="/qdis" className="mt-4 bg-abysse text-white px-6 py-3 rounded-xl font-bold hover:bg-bronze transition-colors shadow-sm text-sm">
+              Parcourir les fichiers
+            </Link>
+          </div>
+        )}
+
+        {/* CONTENU : RECHERCHE CLASSIQUE */}
+        {activeTab === 'classic' && (
+          <div className="bg-white/60 rounded-2xl p-4 flex items-center gap-4 border border-white/80">
+            <div className="flex-1 flex items-center gap-3 bg-white p-3 rounded-xl shadow-sm border border-abysse/5 cursor-text">
+              <MapPin size={20} className="text-bronze" />
+              <div className="flex flex-col">
+                <span className="text-[10px] font-bold text-abysse/40 uppercase">Destination</span>
+                <span className="text-sm font-bold text-abysse">Où allez-vous ?</span>
+              </div>
+            </div>
+            <div className="w-[1px] h-10 bg-abysse/10"></div>
+            <div className="flex-1 flex items-center justify-between bg-white p-3 rounded-xl shadow-sm border border-abysse/5 cursor-pointer">
+              <div className="flex flex-col">
+                <span className="text-[10px] font-bold text-abysse/40 uppercase">Dates</span>
+                <span className="text-sm font-bold text-abysse">Ajouter des dates</span>
+              </div>
+              <ChevronDown size={16} className="text-abysse/40" />
+            </div>
+            <div className="w-[1px] h-10 bg-abysse/10"></div>
+            <div className="flex-1 flex items-center justify-between bg-white p-3 rounded-xl shadow-sm border border-abysse/5 cursor-pointer">
+              <div className="flex flex-col">
+                <span className="text-[10px] font-bold text-abysse/40 uppercase">Voyageurs</span>
+                <span className="text-sm font-bold text-abysse">2 Adultes</span>
+              </div>
+              <User size={16} className="text-abysse/40" />
+            </div>
+            <Link href="/qdis" className="bg-abysse text-white p-4 rounded-xl font-bold hover:bg-bronze transition-colors shadow-md">
+              <Search size={20} />
+            </Link>
+          </div>
+        )}
+
+      </main>
+
+      {/* L'espace Inspiration (scroll vers le bas) - Prévu CDC 1.3 */}
+      <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 cursor-pointer opacity-70 hover:opacity-100 transition-opacity">
+        <span className="text-xs font-bold text-abysse/70 uppercase tracking-widest bg-white/50 px-3 py-1 rounded-full backdrop-blur-sm">Inspiration & Offres</span>
+        <ChevronDown size={20} className="text-abysse animate-bounce" />
       </div>
-    </>
+
+    </div>
   );
 }
